@@ -1,38 +1,73 @@
-# Simulation-with-py
+# Discrete-Event Simulation of a Tool Rental Service
 
+A discrete-event simulation (DES) of a tool rental shop, written in Python from scratch (no simulation library). It models customers arriving, renting tools, using and returning them, and staff doing maintenance and cleaning. The goal is to compare **three staffing policies** by customer waiting time and staff workload.
 
-# Tool Rental Simulation Project
+> B.Sc. course project (Simulation).
 
-This project is a discrete-event simulation of a tool rental facility, implemented in Python. The simulation models the process of customers arriving, renting tools, returning them, and the subsequent maintenance and cleaning operations performed by staff members.
+## Highlights
 
-##  Overview
+- **Event-scheduling engine**: a future event list (FEL) built on a priority queue (`heapq`), with handlers for arrival, rental, return, maintenance and cleaning events
+- **Custom random number generator**: a Linear Congruential Generator (LCG) with `a = 1664525`, `c = 1013904223`, `m = 2^32`
+- **Random variate generation**: normal service times made with the Box–Muller transform (truncated at 0.1 min)
+- **Statistical design**: 30 independent replications per scenario, with a different seed for each, and results averaged across runs
+- **KPIs**: average customer wait, share of customers waiting more than 5 minutes, average queue length, mean rental, maintenance and cleaning times, and task counts per worker
 
-The simulation explores **three different staffing scenarios**, each with a unique assignment of roles among workers:
+## Model
 
-- **Scenario 1:** Basic two-worker setup with specific responsibilities.
-- **Scenario 2:** Modified worker roles to test alternative task handling strategies.
-- **Scenario 3:** Introduction of a third flexible worker ("Roham") who dynamically assists with rental and maintenance tasks.
+| Parameter | Distribution (minutes) |
+|---|---|
+| Customer inter-arrival time | Normal(μ = 30, σ² = 900) |
+| Rental service time, worker K | Normal(14, 16) |
+| Rental service time, workers M / R | Normal(10, 25) |
+| Tool usage duration | Normal(60, 3600) |
+| Tool return handling | 2 (constant) |
+| Maintenance time | Normal(6, 16) |
+| Cleaning time | Normal(10, 36) |
 
-Each scenario is simulated 30 times using different random seeds for statistical validity. The simulation tracks key performance indicators such as:
+Customers arrive until **t = 600 min**, and the shop processes remaining events until **t = 660 min**. Returns get the highest priority, then rentals, then maintenance and cleaning.
 
-- Average customer wait time
-- Rental durations by worker
-- Maintenance and cleaning times
-- Queue lengths and system load
-- Number of operations performed by each worker
+## Scenarios
 
-##  Simulation Features
+| Scenario | Staffing policy |
+|---|---|
+| **1** (`part1.py`) | Two workers (K, M). Both handle returns and rentals; K also does maintenance. |
+| **2** (`part2.py`) | Two workers. K is the first choice for rentals; M rents when free and also does maintenance. |
+| **3** (`part3.py`) | Three workers. M only rents; K does maintenance and cleaning; a floating worker R helps with rentals first, then with maintenance and cleaning. |
 
-- Custom Linear Congruential Generator (LCG) for pseudo-random number generation
-- Normal distributions for simulating task durations
-- Priority-based event scheduling (arrival, rental, return, maintenance, cleaning)
-- Modular and extensible event handlers
-- Detailed performance metrics output as CSV (`results_partX.csv`)
+## Results
 
-##  Files
+Mean over 30 replications (you get these numbers by running the scripts):
 
-- `part1.py`: Core simulation engine for scenario 1
-- `part2.py`: Core simulation engine for scenario 2
-- `part3.py`: Final scenario with an additional floating worker
-- `results_part1.csv`, `results_part2.csv`, `results_part3.csv`: Output metrics from multiple simulation runs
+| Scenario | Avg wait (min) | Customers waiting > 5 min | Avg queue length |
+|---|---|---|---|
+| 1 | 1.01 | 7.3% | 0.39 |
+| 2 | 1.21 | 9.1% | 0.51 |
+| 3 | **0.61** | **3.8%** | **0.15** |
 
+Adding the floating worker (Scenario 3) cuts the average wait by about 40% and halves the share of long waits compared with Scenario 1.
+
+## How to run
+
+```bash
+pip install -r requirements.txt
+python part1.py   # writes results_part1.csv
+python part2.py   # writes results_part2.csv
+python part3.py   # writes results_part3.csv
+```
+
+Each script prints a table with all 30 runs plus a summary row, and saves it as CSV.
+
+## Repository structure
+
+```
+part1.py, part2.py, part3.py                  # Simulation for scenarios 1–3
+partone.ipynb, partsec.ipynb, partthird.ipynb  # Notebook versions of the same scenarios
+requirements.txt
+```
+
+## Authors
+
+- **[@panizotaghi](https://github.com/panizotaghi)**
+- **[@Hussmart](https://github.com/Hussmart)**
+
+This is a joint project. It was first published at [Hussmart/Discrete-event-queue-simulator](https://github.com/Hussmart/Discrete-event-queue-simulator).
