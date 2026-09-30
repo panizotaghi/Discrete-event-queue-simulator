@@ -2,7 +2,10 @@
 
 A discrete-event simulation (DES) of a tool rental shop, written in Python from scratch (no simulation library). It models customers arriving, renting tools, using and returning them, and staff doing maintenance and cleaning. The goal is to compare **three staffing policies** by customer waiting time and staff workload.
 
-> B.Sc. course project (Simulation).
+- **Instructor:** Dr. Abbas Ahmadi
+- **Course:** Principles of Simulation
+- **Department:** Industrial Engineering, Amirkabir University of Technology (Tehran Polytechnic)
+- **Author:** Paniz Otaghi (team project of two students)
 
 ## Highlights
 
@@ -67,7 +70,4 @@ requirements.txt
 
 ## Authors
 
-- **[@panizotaghi](https://github.com/panizotaghi)**
-- **[@Hussmart](https://github.com/Hussmart)**
-
-This is a joint project. It was first published at [Hussmart/Discrete-event-queue-simulator](https://github.com/Hussmart/Discrete-event-queue-simulator).
+This is a team project of two students, completed for the Principles of Simulation course. This repository is maintained by [@panizotaghi](https://github.com/panizotaghi).
